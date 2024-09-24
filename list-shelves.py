@@ -1,4 +1,6 @@
+import filecmp
 import logging
+import shutil
 import subprocess
 from os import listdir
 import os.path
@@ -57,9 +59,14 @@ def export(shelf, shelf_id, output, col, debug=False):
         ebook_dir = f'{CALIBRE_DATABASE}/{book[2]}'
         only_files = [f for f in listdir(ebook_dir) if os.path.isfile(os.path.join(ebook_dir, f))]
         for f in [s for s in only_files if s.endswith(".epub")]:
-            logger.debug(f'rsync {ebook_dir}/{f} {output}/{shelf}')
-            subprocess.call(["rsync", f'{ebook_dir}/{f}', f'{output}/{shelf}'])
-
+            from_file = f'{ebook_dir}/{f}'
+            to_file = f'{output}/{shelf}/{f}'
+            # subprocess.call(["rsync", f'{ebook_dir}/{f}', f'{output}/{shelf}'])
+            # distutils.file_util.copy_file(src, dst[, preserve_mode=1, preserve_times=1, update=0, link=None, verbose=0, dry_run=0])
+            logger.debug(f"cmp {from_file} {to_file}: {filecmp.cmp(from_file, to_file, shallow=True)}")
+            if not filecmp.cmp(from_file, to_file, shallow=True):
+                logger.debug(f'cp {from_file} {to_file}')
+                shutil.copy2(from_file, to_file)
 
 def main():
     fire.Fire({
