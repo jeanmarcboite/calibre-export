@@ -63,8 +63,12 @@ def export(shelf, shelf_id, output, col, debug=False):
             to_file = f'{output}/{shelf}/{f}'
             # subprocess.call(["rsync", f'{ebook_dir}/{f}', f'{output}/{shelf}'])
             # distutils.file_util.copy_file(src, dst[, preserve_mode=1, preserve_times=1, update=0, link=None, verbose=0, dry_run=0])
-            logger.debug(f"cmp {from_file} {to_file}: {filecmp.cmp(from_file, to_file, shallow=True)}")
-            if not filecmp.cmp(from_file, to_file, shallow=True):
+            # logger.debug(f"cmp {from_file} {to_file}: {filecmp.cmp(from_file, to_file, shallow=True)}")
+            try:
+                if not filecmp.cmp(from_file, to_file, shallow=True):
+                    logger.info(f'[update] cp {from_file} {to_file}')
+                    shutil.copy2(from_file, to_file)
+            except FileNotFoundError:
                 logger.debug(f'cp {from_file} {to_file}')
                 shutil.copy2(from_file, to_file)
 
