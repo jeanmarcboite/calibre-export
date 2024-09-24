@@ -33,7 +33,7 @@ def export_custom_column(column: str, output: str, debug: bool = False):
     if debug:
         logger.setLevel(logging.DEBUG)
     try:
-        rows = fetchall(f'select id, label from custom_columns where label == \"{column}\"')
+        rows = fetchall(f'select id from custom_columns where label == \"{column}\"')
         for row in rows:
             values = fetchall(f'select value, id from custom_column_{row[0]} order by value')
             for value in values:
