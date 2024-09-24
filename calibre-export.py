@@ -25,7 +25,7 @@ def export_custom_column(database: str, label: str, output: str, value = 1, debu
             logger.error(f'no such column: {label}')
         elif row[1] == 'bool':
             for book in fetchall(db_con, f'select book from custom_column_{row[0]} where value == {value}'):
-                copy_book(book[0], output)
+                copy_book(db_con, database, book[0], output)
         else:
             values = fetchall(db_con, f'select value, id from custom_column_{row[0]} order by value')
             for value in values:
@@ -33,7 +33,7 @@ def export_custom_column(database: str, label: str, output: str, value = 1, debu
     except sqlite3.OperationalError as e:
         logger.error(f'{type(e)}: {e}')
 
-def copy_book(db_con, database, book_id, output):
+def copy_book(db_con: sqlite3.Connection, database: str, book_id, output):
     book = db_con.cursor().execute(f'select path from books where id == {book_id}').fetchone()
     if book is None:
         logger.error(f'no book with id: {book_id}')
