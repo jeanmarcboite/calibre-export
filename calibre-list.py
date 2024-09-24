@@ -1,7 +1,6 @@
 import filecmp
 import logging
 import shutil
-import subprocess
 from os import listdir
 import os.path
 
