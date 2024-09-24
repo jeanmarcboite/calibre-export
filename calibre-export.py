@@ -6,70 +6,70 @@ import sqlite3
 import pathlib
 
 import fire
-CALIBRE_DATABASE = "/home/box/Desktop/myCalibreLibrary"
-db_con = sqlite3.connect("/home/box/Desktop/myCalibreLibrary/metadata.db")
 
 logger = logging.getLogger(__name__)
-def export_authors(output: str, debug: bool = False):
-    return copy_books("authors", "sort", output, debug)
-def export_tags(output: str, debug: bool = False):
+def export_authors(database: str, output: str, debug: bool = False):
+    return copy_books(database, "authors", "sort", output, debug)
+def export_tags(database: str, output: str, debug: bool = False):
     # no sort field in tags table
-    return copy_books("tags", "name", output, debug)
-def export_series(output: str, debug: bool = False):
-    return copy_books("series", "sort", output, debug)
-def export_custom_column(label: str, output: str, value = 1, debug: bool = False):
+    return copy_books(database,"tags", "name", output, debug)
+def export_series(database: str, output: str, debug: bool = False):
+    return copy_books(database,"series", "sort", output, debug)
+def export_custom_column(database: str, label: str, output: str, value = 1, debug: bool = False):
     if debug:
         logger.setLevel(logging.DEBUG)
     try:
+        db_con = sqlite3.connect(f'{database}/metadata.db')
         row = db_con.cursor().execute(f'select id, datatype from custom_columns where label == \"{label}\"').fetchone()
         if row is None:
             logger.error(f'no such column: {label}')
         elif row[1] == 'bool':
-            for book in fetchall(f'select book from custom_column_{row[0]} where value == {value}'):
+            for book in fetchall(db_con, f'select book from custom_column_{row[0]} where value == {value}'):
                 copy_book(book[0], output)
         else:
-            values = fetchall(f'select value, id from custom_column_{row[0]} order by value')
+            values = fetchall(db_con, f'select value, id from custom_column_{row[0]} order by value')
             for value in values:
-                copy_shelf(value[0], value[1], output, row[0], debug)
+                copy_shelf(db_con, database, value[0], value[1], output, row[0], debug)
     except sqlite3.OperationalError as e:
         logger.error(f'{type(e)}: {e}')
 
-def copy_book(book_id, output):
+def copy_book(db_con, database, book_id, output):
     book = db_con.cursor().execute(f'select path from books where id == {book_id}').fetchone()
     if book is None:
         logger.error(f'no book with id: {book_id}')
     else:
-        copy_files(f'{CALIBRE_DATABASE}/{book[0]}', output)
+        copy_files(f'{database}/{book[0]}', output)
 
-def copy_shelf(shelf, shelf_id, output, col, debug=False):
+def copy_shelf(db_con: sqlite3.Connection, database: str, shelf, shelf_id, output, col, debug=False):
     output_directory = f'{output}/{shelf}'
     logger.warning(f'Create directory {output_directory}')
-    books = fetchall(f'select book from books_custom_column_{col}_link where value == {shelf_id}')
+    books = fetchall(db_con, f'select book from books_custom_column_{col}_link where value == {shelf_id}')
     book_list = []
     for book in books:
-        b = fetchall(f'select title, sort, path from books where id == {book[0]}')
+        b = fetchall(db_con, f'select title, sort, path from books where id == {book[0]}')
         book_list.append(b[0])
     logger.debug(f'books: {book_list}')
     for book in sorted(book_list, key=lambda bk: bk[1]):
-        copy_files(f'{CALIBRE_DATABASE}/{book[2]}', output_directory)
+        copy_files(f'{database}/{book[2]}', output_directory)
 
 
-def copy_books(table: str, attribute: str, output_directory: str, debug: bool = False):
+def copy_books(database: str, table: str, attribute: str, output_directory: str, debug: bool = False):
     if debug:
         logger.setLevel(logging.DEBUG)
     try:
+        db_con = sqlite3.connect(f'{database}/metadata.db')
         items = {}
-        for item in fetchall(f'select id, name, {attribute} from {table}'):
+        for item in fetchall(db_con, f'select id, name, {attribute} from {table}'):
             # item[author_id] = item[author_sort]
             items[item[0]] = [item[1], item[2]]
         logger.debug(items)
 
-        for book in fetchall(f'select * from books_{table}_link'):
+        for book in fetchall(db_con, f'select * from books_{table}_link'):
             item = items[book[2]]
             if len(item[1].split()) <= 5:
                 output_subdirectory = f'{output_directory}/{item[1]}'
-                b = fetchall(f'select title, sort, path from books where id == {book[1]}')[0]
-                copy_files(f'{CALIBRE_DATABASE}/{b[2]}', output_subdirectory)
+                b = fetchall(db_con, f'select title, sort, path from books where id == {book[1]}')[0]
+                copy_files(f'{database}/{b[2]}', output_subdirectory)
     except sqlite3.OperationalError as e:
         logger.error(f'{type(e)}: {e}')
 
@@ -99,7 +99,7 @@ def set_logger():
     ch.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
     logger.addHandler(ch)
 
-def fetchall(command):
+def fetchall(db_con: sqlite3.Connection, command: str):
     cursor = db_con.cursor()
     rows = cursor.execute(command).fetchall()
     logger.debug(f'{command}: {rows}')
