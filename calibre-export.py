@@ -33,16 +33,16 @@ class Export(object):
     def __copy_table_books(self, table: str, attribute = "name"):
         try:
             items = {}
-            for item in fetchall(self.db_con, f'select id, name, {attribute} from {table}'):
+            for item in self.__fetchall(f'select id, name, {attribute} from {table}'):
                 # item[author_id] = item[author_sort]
                 items[item[0]] = [item[1], item[2]]
             logger.debug(items)
 
-            for book in fetchall(self.db_con, f'select * from books_{table}_link'):
+            for book in self.__fetchall(f'select * from books_{table}_link'):
                 item = items[book[2]]
                 if len(item[1].split()) <= 5:
                     output_subdirectory = f'{self.output}/{item[1]}'
-                    b = fetchall(self.db_con, f'select title, sort, path from books where id == {book[1]}')[0]
+                    b = self.__fetchall(f'select title, sort, path from books where id == {book[1]}')[0]
                     copy_files(f'{self.database}/{b[2]}', output_subdirectory)
         except sqlite3.OperationalError as e:
             logger.error(f'{type(e)}: {e}')
@@ -53,10 +53,10 @@ class Export(object):
             if row is None:
                 logger.error(f'no such column: {label}')
             elif row[1] == 'bool':
-                for book in fetchall(self.db_con, f'select book from custom_column_{row[0]} where value == {value}'):
+                for book in self.__fetchall(f'select book from custom_column_{row[0]} where value == {value}'):
                     self.__copy_book(book[0])
             else:
-                values = fetchall(self.db_con, f'select value, id from custom_column_{row[0]} order by value')
+                values = self.__fetchall(f'select value, id from custom_column_{row[0]} order by value')
                 for value in values:
                     self.__copy_shelf(value[0], value[1], row[0])
         except sqlite3.OperationalError as e:
@@ -72,15 +72,21 @@ class Export(object):
     def __copy_shelf(self, shelf, shelf_id, col):
         output_directory = f'{self.output}/{shelf}'
         logger.warning(f'Create directory {output_directory}')
-        books = fetchall(self.db_con, f'select book from books_custom_column_{col}_link where value == {shelf_id}')
+        books = self.__fetchall(f'select book from books_custom_column_{col}_link where value == {shelf_id}')
         book_list = []
         for book in books:
-            b = fetchall(self.db_con, f'select title, sort, path from books where id == {book[0]}')
+            b = self.__fetchall(f'select title, sort, path from books where id == {book[0]}')
             book_list.append(b[0])
         logger.debug(f'books: {book_list}')
         for book in sorted(book_list, key=lambda bk: bk[1]):
             copy_files(f'{self.database}/{book[2]}', output_directory)
 
+    def __fetchall(self, command: str):
+        cursor = self.db_con.cursor()
+        rows = cursor.execute(command).fetchall()
+        logger.debug(f'{command}: {rows}')
+
+        return rows
 
 
 def copy_files(input_directory, output_directory):
@@ -108,12 +114,6 @@ def set_logger():
     ch.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
     logger.addHandler(ch)
 
-def fetchall(db_con: sqlite3.Connection, command: str):
-    cursor = db_con.cursor()
-    rows = cursor.execute(command).fetchall()
-    logger.debug(f'{command}: {rows}')
-
-    return rows
 
 
 if __name__ == '__main__':
