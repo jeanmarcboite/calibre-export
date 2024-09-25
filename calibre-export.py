@@ -83,26 +83,6 @@ def copy_shelf(db_con: sqlite3.Connection, database: str, shelf, shelf_id, outpu
         copy_files(f'{database}/{book[2]}', output_directory)
 
 
-def copy_books(database: str, table: str, attribute: str, output_directory: str, debug: bool = False):
-    if debug:
-        logger.setLevel(logging.DEBUG)
-    try:
-        db_con = sqlite3.connect(f'{database}/metadata.db')
-        items = {}
-        for item in fetchall(db_con, f'select id, name, {attribute} from {table}'):
-            # item[author_id] = item[author_sort]
-            items[item[0]] = [item[1], item[2]]
-        logger.debug(items)
-
-        for book in fetchall(db_con, f'select * from books_{table}_link'):
-            item = items[book[2]]
-            if len(item[1].split()) <= 5:
-                output_subdirectory = f'{output_directory}/{item[1]}'
-                b = fetchall(db_con, f'select title, sort, path from books where id == {book[1]}')[0]
-                copy_files(f'{database}/{b[2]}', output_subdirectory)
-    except sqlite3.OperationalError as e:
-        logger.error(f'{type(e)}: {e}')
-
 
 def copy_files(input_directory, output_directory):
     only_files = [f for f in os.listdir(input_directory) if os.path.isfile(os.path.join(input_directory, f))]
