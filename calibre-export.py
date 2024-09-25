@@ -6,15 +6,45 @@ import sqlite3
 import pathlib
 
 import fire
-
 logger = logging.getLogger(__name__)
-def export_authors(database: str, output: str, debug: bool = False):
-    return copy_books(database, "authors", "sort", output, debug)
-def export_tags(database: str, output: str, debug: bool = False):
-    # no sort field in tags table
-    return copy_books(database,"tags", "name", output, debug)
-def export_series(database: str, output: str, debug: bool = False):
-    return copy_books(database,"series", "sort", output, debug)
+
+class Export(object):
+    def __init__(self, database: str, output: str, debug: bool = False):
+        self.database = database
+        self.output = output
+        self.debug = debug
+
+    def authors(self):
+        return self.__copy_books("authors", "sort")
+    def tags(self):
+        # no sort field in tags table
+        return self.__copy_books("tags")
+    def series(self):
+        return self.__copy_books("series", "sort")
+    def column(self, label: str, value = 1):
+        return export_custom_column(self.database, label, self.output, value, self.debug)
+
+
+    def __copy_books(self, table: str, attribute = "name"):
+        if self.debug:
+            logger.setLevel(logging.DEBUG)
+        try:
+            db_con = sqlite3.connect(f'{self.database}/metadata.db')
+            items = {}
+            for item in fetchall(db_con, f'select id, name, {attribute} from {table}'):
+                # item[author_id] = item[author_sort]
+                items[item[0]] = [item[1], item[2]]
+            logger.debug(items)
+
+            for book in fetchall(db_con, f'select * from books_{table}_link'):
+                item = items[book[2]]
+                if len(item[1].split()) <= 5:
+                    output_subdirectory = f'{self.output}/{item[1]}'
+                    b = fetchall(db_con, f'select title, sort, path from books where id == {book[1]}')[0]
+                    copy_files(f'{self.database}/{b[2]}', output_subdirectory)
+        except sqlite3.OperationalError as e:
+            logger.error(f'{type(e)}: {e}')
+
 def export_custom_column(database: str, label: str, output: str, value = 1, debug: bool = False):
     if debug:
         logger.setLevel(logging.DEBUG)
@@ -82,8 +112,8 @@ def copy_file(filename, input_directory, output_directory):
     pathlib.Path(output_directory).mkdir(parents=True, exist_ok=True)
     from_file = f'{input_directory}/{filename}'
     to_file = f'{output_directory}/{filename}'
-    # logger.debug(f"cmp {from_file} {to_file}: {filecmp.cmp(from_file, to_file, shallow=True)}")
     try:
+        logger.debug(f"cmp {from_file} {to_file}: {filecmp.cmp(from_file, to_file, shallow=True)}")
         if not filecmp.cmp(from_file, to_file, shallow=True):
             logger.info(f'[update] cp {from_file} {to_file}')
             shutil.copy2(from_file, to_file)
@@ -109,4 +139,5 @@ def fetchall(db_con: sqlite3.Connection, command: str):
 
 if __name__ == '__main__':
     set_logger()
-    fire.Fire(dict(authors=export_authors, series=export_series, tags=export_tags, column=export_custom_column))
+    #fire.Fire(dict(authors=export_authors, series=export_series, tags=export_tags, column=export_custom_column))
+    fire.Fire(Export)
