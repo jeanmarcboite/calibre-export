@@ -9,10 +9,11 @@ import fire
 logger = logging.getLogger(__name__)
 
 class Export(object):
-    def __init__(self, database: str, output: str, debug: bool = False):
+    def __init__(self, database: str, output: str, fmt: str = "epub", debug: bool = False):
         self.db_con = None
         self.database = database
         self.output = output
+        self.fmt = fmt
         self.debug = debug
         if self.debug:
             logger.setLevel(logging.DEBUG)
@@ -43,7 +44,7 @@ class Export(object):
                 if len(item[1].split()) <= 5:
                     output_subdirectory = f'{self.output}/{item[1]}'
                     b = self.__fetchall(f'select title, sort, path from books where id == {book[1]}')[0]
-                    copy_files(f'{self.database}/{b[2]}', output_subdirectory)
+                    copy_files(f'{self.database}/{b[2]}', output_subdirectory, self.fmt)
         except sqlite3.OperationalError as e:
             logger.error(f'{type(e)}: {e}')
 
@@ -67,7 +68,7 @@ class Export(object):
         if book is None:
             logger.error(f'no book with id: {book_id}')
         else:
-            copy_files(f'{self.database}/{book[0]}', self.output)
+            copy_files(f'{self.database}/{book[0]}', self.output, self.fmt)
 
     def __copy_shelf(self, shelf, shelf_id, col):
         output_directory = f'{self.output}/{shelf}'
@@ -79,7 +80,7 @@ class Export(object):
             book_list.append(b[0])
         logger.debug(f'books: {book_list}')
         for book in sorted(book_list, key=lambda bk: bk[1]):
-            copy_files(f'{self.database}/{book[2]}', output_directory)
+            copy_files(f'{self.database}/{book[2]}', output_directory, self.fmt)
 
     def __fetchall(self, command: str):
         rows = self.db_con.cursor().execute(command).fetchall()
@@ -91,9 +92,9 @@ class Export(object):
         return self.db_con.cursor().execute(command).fetchone()
 
 
-def copy_files(input_directory, output_directory):
+def copy_files(input_directory: str, output_directory: str, fmt: str):
     only_files = [f for f in os.listdir(input_directory) if os.path.isfile(os.path.join(input_directory, f))]
-    for f in [s for s in only_files if s.endswith(".epub")]:
+    for f in [s for s in only_files if s.endswith(f'.{fmt}')]:
         copy_file(f, input_directory, output_directory)
 def copy_file(filename, input_directory, output_directory):
     pathlib.Path(output_directory).mkdir(parents=True, exist_ok=True)
