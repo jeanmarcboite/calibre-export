@@ -49,7 +49,7 @@ class Export(object):
 
     def __copy_custom_column_books(self, label: str, value: int):
         try:
-            row = self.db_con.cursor().execute(f'select id, datatype from custom_columns where label == \"{label}\"').fetchone()
+            row = self.__fetchone(f'select id, datatype from custom_columns where label == \"{label}\"')
             if row is None:
                 logger.error(f'no such column: {label}')
             elif row[1] == 'bool':
@@ -63,7 +63,7 @@ class Export(object):
             logger.error(f'{type(e)}: {e}')
 
     def __copy_book(self, book_id):
-        book = self.db_con.cursor().execute(f'select path from books where id == {book_id}').fetchone()
+        book = self.__fetchone(f'select path from books where id == {book_id}')
         if book is None:
             logger.error(f'no book with id: {book_id}')
         else:
@@ -82,11 +82,13 @@ class Export(object):
             copy_files(f'{self.database}/{book[2]}', output_directory)
 
     def __fetchall(self, command: str):
-        cursor = self.db_con.cursor()
-        rows = cursor.execute(command).fetchall()
+        rows = self.db_con.cursor().execute(command).fetchall()
         logger.debug(f'{command}: {rows}')
 
         return rows
+
+    def __fetchone(self, command: str):
+        return self.db_con.cursor().execute(command).fetchone()
 
 
 def copy_files(input_directory, output_directory):
