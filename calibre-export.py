@@ -4,6 +4,7 @@ import os
 import shutil
 import sqlite3
 import pathlib
+import copy
 
 import fire
 logger = logging.getLogger(__name__)
@@ -29,6 +30,19 @@ class Export(object):
         return self.__copy_table_books("series", "sort")
     def column(self, label: str, value = 1):
         return self.__copy_custom_column_books(label, value)
+    def export(self):
+        other = copy.copy(self)
+        other.output = self.output + "/authors"
+        other.authors()
+        other.output = self.output + "/tags"
+        other.tags()
+        other.output = self.output + "/series"
+        other.series()
+        other.output = self.output + "/epub"
+        other.column('bookshelf')
+        other.output = self.output + "/pdf"
+        other.fmt = "pdf"
+        other.column('bookshelf')
 
 
     def __copy_table_books(self, table: str, attribute = "name"):
