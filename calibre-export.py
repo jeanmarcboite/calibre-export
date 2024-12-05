@@ -111,9 +111,10 @@ def copy_files(input_directory: str, output_directory: str, fmt: str):
     for f in [s for s in only_files if s.endswith(f'.{fmt}')]:
         copy_file(f, input_directory, output_directory)
 def copy_file(filename, input_directory, output_directory):
-    pathlib.Path(output_directory).mkdir(parents=True, exist_ok=True)
+    output_dir = "/".join(output_directory.split(" | "))
+    pathlib.Path(output_dir).mkdir(parents=True, exist_ok=True)
     from_file = f'{input_directory}/{filename}'
-    to_file = f'{output_directory}/{filename}'
+    to_file = f'{output_dir}/{filename}'
     try:
         logger.debug(f"cmp {from_file} {to_file}: {filecmp.cmp(from_file, to_file, shallow=True)}")
         if not filecmp.cmp(from_file, to_file, shallow=True):
