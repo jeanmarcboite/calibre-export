@@ -11,7 +11,7 @@ class CalibreLibrary(object):
 
 
 @click.group()
-@click.option('--library', envvar='CALIBRE_LIBRARY', type=click.Path(exists=True, file_okay=False, dir_okay=True, readable=True))
+@click.option('--library', type=click.Path(exists=True, file_okay=False, dir_okay=True, readable=True))
 @click.option('--debug/--no-debug', default=False,
               envvar='PYTHON_DEBUG')
 @click.pass_context
