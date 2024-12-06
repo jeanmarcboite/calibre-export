@@ -90,6 +90,8 @@ class Languages(BaseModel):
 
     class Meta:
         table_name = 'languages'
+    def __str__(self):
+        return self.lang_code
 
 class LastReadPositions(BaseModel):
     book = IntegerField(index=True)
