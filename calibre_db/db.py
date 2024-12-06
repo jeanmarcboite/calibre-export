@@ -51,4 +51,6 @@ class BooksAuthorsLink(BaseModel):
         indexes = (
             (('book', 'author'), True),
         )
+    def __str__(self):
+        return f'{self.book} {self.author}'
 
