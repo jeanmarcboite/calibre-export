@@ -1,4 +1,4 @@
-from calibre_db import Authors, Books, BooksAuthorsLink
+from calibre_db import Authors, Books
 
 
 def get_authors() -> dict:
@@ -15,10 +15,6 @@ def get_books() -> dict:
         books[entry.id] = entry
     return books
 
-
-def books_authors_link():
-    query = BooksAuthorsLink.select()
-    return list(query)
 
 
 class CalibreMetadata():

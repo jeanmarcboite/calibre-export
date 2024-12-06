@@ -1,15 +1,8 @@
 from peewee import *
 
-sqlite_db = SqliteDatabase(None)
-class UnknownField(object):
-    def __init__(self, *_, **__): pass
+from calibre_db.base_model import BaseModel, UnknownField
 
-# model definitions -- the standard "pattern" is to define a base model class
-# that specifies which database to use.  then, any subclasses will automatically
-# use the correct storage.
-class BaseModel(Model):
-    class Meta:
-        database = sqlite_db
+
 class Authors(BaseModel):
     link = TextField(constraints=[SQL("DEFAULT ''")])
     name = TextField(unique=True)
@@ -42,15 +35,124 @@ class Books(BaseModel):
     def __str__(self):
         return self.title
 
-class BooksAuthorsLink(BaseModel):
-    author = IntegerField(index=True)
-    book = IntegerField(index=True)
+
+class Comments(BaseModel):
+    book = IntegerField(unique=True)
+    text = TextField()
 
     class Meta:
-        table_name = 'books_authors_link'
+        table_name = 'comments'
+
+class ConversionOptions(BaseModel):
+    book = IntegerField(index=True, null=True)
+    data = BlobField()
+    format = TextField(index=True)
+
+    class Meta:
+        table_name = 'conversion_options'
         indexes = (
-            (('book', 'author'), True),
+            (('format', 'book'), True),
         )
-    def __str__(self):
-        return f'{self.book} {self.author}'
+
+class Data(BaseModel):
+    book = IntegerField(index=True)
+    format = TextField(index=True)
+    name = TextField()
+    uncompressed_size = IntegerField()
+
+    class Meta:
+        table_name = 'data'
+        indexes = (
+            (('book', 'format'), True),
+        )
+
+class Feeds(BaseModel):
+    script = TextField()
+    title = TextField(unique=True)
+
+    class Meta:
+        table_name = 'feeds'
+
+class Identifiers(BaseModel):
+    book = IntegerField()
+    type = TextField(constraints=[SQL("DEFAULT 'isbn'")])
+    val = TextField()
+
+    class Meta:
+        table_name = 'identifiers'
+        indexes = (
+            (('book', 'type'), True),
+        )
+
+class Languages(BaseModel):
+    lang_code = TextField(unique=True)
+    link = TextField(constraints=[SQL("DEFAULT ''")])
+
+    class Meta:
+        table_name = 'languages'
+
+class LastReadPositions(BaseModel):
+    book = IntegerField(index=True)
+    cfi = TextField()
+    device = TextField()
+    epoch = FloatField()
+    format = TextField()
+    pos_frac = FloatField(constraints=[SQL("DEFAULT 0")])
+    user = TextField()
+
+    class Meta:
+        table_name = 'last_read_positions'
+        indexes = (
+            (('user', 'device', 'book', 'format'), True),
+        )
+
+class LibraryId(BaseModel):
+    uuid = TextField(unique=True)
+
+    class Meta:
+        table_name = 'library_id'
+
+class MetadataDirtied(BaseModel):
+    book = IntegerField(unique=True)
+
+    class Meta:
+        table_name = 'metadata_dirtied'
+
+class Publishers(BaseModel):
+    link = TextField(constraints=[SQL("DEFAULT ''")])
+    name = TextField(unique=True)
+    sort = TextField(null=True)
+
+    class Meta:
+        table_name = 'publishers'
+
+class Ratings(BaseModel):
+    link = TextField(constraints=[SQL("DEFAULT ''")])
+    rating = IntegerField(null=True, unique=True)
+
+    class Meta:
+        table_name = 'ratings'
+
+class Series(BaseModel):
+    link = TextField(constraints=[SQL("DEFAULT ''")])
+    name = TextField(unique=True)
+    sort = TextField(null=True)
+
+    class Meta:
+        table_name = 'series'
+
+class SqliteSequence(BaseModel):
+    name = BareField(null=True)
+    seq = BareField(null=True)
+
+    class Meta:
+        table_name = 'sqlite_sequence'
+        primary_key = False
+
+class Tags(BaseModel):
+    link = TextField(constraints=[SQL("DEFAULT ''")])
+    name = TextField(index=True)
+
+    class Meta:
+        table_name = 'tags'
 

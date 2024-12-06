@@ -1,4 +1,6 @@
 import calibre_db
+from calibre_db.links import BooksAuthorsLink
+
 
 class Book(calibre_db.Books):
     def __init__(self, _from: calibre_db.Books):
@@ -11,9 +13,9 @@ class Book(calibre_db.Books):
 
 
 class Books(dict):
-    def __init__(self, _from: dict, authors: dict, books_authors_link: list):
+    def __init__(self, _from: dict, authors: dict):
         super().__init__()
         for k, v in _from.items():
             self[k] = Book(v)
-        for link in books_authors_link:
+        for link in list(BooksAuthorsLink.select()):
             self[link.book].authors.append(authors[link.author])
