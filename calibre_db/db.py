@@ -125,6 +125,8 @@ class Publishers(BaseModel):
 
     class Meta:
         table_name = 'publishers'
+    def __str__(self):
+        return self.name
 
 class Ratings(BaseModel):
     link = TextField(constraints=[SQL("DEFAULT ''")])

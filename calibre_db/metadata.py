@@ -1,4 +1,4 @@
-from calibre_db import Authors, Books
+from calibre_db import Authors, Books, Publishers
 
 
 def get_authors() -> dict:
@@ -15,12 +15,20 @@ def get_books() -> dict:
         books[entry.id] = entry
     return books
 
+def get_publishers() -> dict:
+    query = Publishers.select()
+    publishers = {}
+    for entry in query:
+        publishers[entry.id] = entry
+    return publishers
+
 
 
 class CalibreMetadata():
     def __init__(self):
         self.authors = get_authors()
         self.books = get_books()
+        self.publishers = get_publishers()
 
     def __str__(self):
         return f'{{Authors: {self.authors}, Books: {self.books}}}'
