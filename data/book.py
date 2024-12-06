@@ -1,15 +1,18 @@
+from typing import Type
+
 import calibre_db
+from calibre_db import BaseModel
 from calibre_db.links import BooksAuthorsLink, BooksLanguagesLink, BooksPublishersLink
-from calibre_db.metadata import get_publishers, CalibreMetadata
+from calibre_db.metadata import CalibreMetadata
 
 
 class Book(calibre_db.Books):
     def __init__(self, _from: calibre_db.Books):
         super().__init__()
         self.__dict__.update(_from.__dict__)
-        self.authors = list()
-        self.comments = list()
-        self.languages = list()
+        self.authors = []
+        self.comments = []
+        self.languages = []
         self.publishers = []
 
     def __str__(self):
@@ -19,10 +22,13 @@ class Book(calibre_db.Books):
 class Books(dict):
     def __init__(self, metadata: CalibreMetadata):
         super().__init__()
-        for k, v in metadata.books.items():
+        self.metadata = metadata
+        for k, v in self.metadata.book.items():
             self[k] = Book(v)
-        for link in list(BooksAuthorsLink.select()):
-            self[link.book].authors.append(metadata.authors[link.author])
+        self.append('author', BooksAuthorsLink)
+        self.append('publisher', BooksPublishersLink)
 
-        for link in list(BooksPublishersLink.select()):
-            self[link.book].publishers.append(metadata.publishers[link.publisher])
+    def append(self, attr: str, model: Type[BaseModel]):
+        for link in list(model.select()):
+            self[link.book].authors.append(getattr(self.metadata, attr)[getattr(link, attr)])
+

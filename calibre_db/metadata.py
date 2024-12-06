@@ -1,34 +1,21 @@
-from calibre_db import Authors, Books, Publishers
+from symtable import Class
+from typing import Type
+
+from calibre_db import Authors, Books, Publishers, BaseModel
 
 
-def get_authors() -> dict:
-    query = Authors.select()
-    authors = {}
-    for entry in query:
-        authors[entry.id] = entry
-    return authors
-
-def get_books() -> dict:
-    query = Books.select()
-    books = {}
-    for entry in query:
-        books[entry.id] = entry
-    return books
-
-def get_publishers() -> dict:
-    query = Publishers.select()
-    publishers = {}
-    for entry in query:
-        publishers[entry.id] = entry
-    return publishers
-
+def get_table(cls: Type[BaseModel]) -> dict:
+    table = {}
+    for entry in cls.select():
+        table[entry.id] = entry
+    return table
 
 
 class CalibreMetadata():
     def __init__(self):
-        self.authors = get_authors()
-        self.books = get_books()
-        self.publishers = get_publishers()
+        self.author = get_table(Authors)
+        self.book = get_table(Books)
+        self.publisher = get_table(Publishers)
 
     def __str__(self):
-        return f'{{Authors: {self.authors}, Books: {self.books}}}'
+        return f'{{Authors: {self.author}, Books: {self.book}}}'
