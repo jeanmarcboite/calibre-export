@@ -1,7 +1,6 @@
 from typing import Type
 
-from prettytable import PrettyTable
-
+from texttable import Texttable
 import calibre_db
 from calibre_db.links import *
 from calibre_db.metadata import CalibreMetadata
@@ -42,11 +41,14 @@ class Books(dict):
         self.append('tag', BooksTagsLink)
 
     def __str__(self):
-        book_table = PrettyTable()
-        book_table.field_names = ["Title", "Author", "Publisher", "Language", "Rating", "Series", "Tags"]
+        book_table = Texttable()
+        book_table.set_deco(Texttable.HEADER | Texttable.VLINES)
+
+        book_table.header(["Title", "Author", "Publisher", "Language", "Rating", "Series", "Tags"])
+        book_table.set_cols_align(['l', 'l', 'l', 'r', 'c', 'l', 'l'])
         for book in self.values():
             book_table.add_row(book.pretty_row())
-        return str(book_table)
+        return book_table.draw()
 
     def append(self, attr: str, model: Type[BaseModel]):
         for link in list(model.select()):
