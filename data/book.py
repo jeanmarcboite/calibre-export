@@ -44,8 +44,9 @@ class Books(dict):
         book_table = Texttable()
         book_table.set_deco(Texttable.HEADER | Texttable.VLINES)
 
-        book_table.header(["Title", "Author", "Publisher", "Language", "Rating", "Series", "Tags"])
-        book_table.set_cols_align(['l', 'l', 'l', 'r', 'c', 'l', 'l'])
+        book_table.header(["Title", "Author", "Publisher", "Lang", "Rat.", "Series", "Tags"])
+        book_table.set_cols_align(['l', 'l', 'l', 'c', 'c', 'l', 'l'])
+        book_table.set_cols_width([50, 30, 20, 5, 4, 20, 30])
         for book in self.values():
             book_table.add_row(book.pretty_row())
         return book_table.draw()
