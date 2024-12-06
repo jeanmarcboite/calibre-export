@@ -1,9 +1,14 @@
 from typing import Type
 
+from prettytable import PrettyTable
+
 import calibre_db
-from calibre_db import BaseModel
 from calibre_db.links import *
 from calibre_db.metadata import CalibreMetadata
+
+
+def pretty(data: list):
+    return ", ".join(map(str, data))
 
 
 class Book(calibre_db.Books):
@@ -20,7 +25,8 @@ class Book(calibre_db.Books):
 
     def __str__(self):
         return f'{self.title}, {self.author}, {self.publisher}, {self.lang_code}, {self.rating}, {self.series}, {self.tag}'
-
+    def pretty_row(self):
+        return [self.title, pretty(self.author), pretty(self.publisher), pretty(self.lang_code), pretty(self.rating), pretty(self.series), pretty(self.tag)]
 
 class Books(dict):
     def __init__(self, metadata: CalibreMetadata):
@@ -36,10 +42,11 @@ class Books(dict):
         self.append('tag', BooksTagsLink)
 
     def __str__(self):
-        r = '\n'
+        book_table = PrettyTable()
+        book_table.field_names = ["Title", "Author", "Publisher", "Language", "Rating", "Series", "Tags"]
         for book in self.values():
-            r += f'{book}\n'
-        return r
+            book_table.add_row(book.pretty_row())
+        return str(book_table)
 
     def append(self, attr: str, model: Type[BaseModel]):
         for link in list(model.select()):

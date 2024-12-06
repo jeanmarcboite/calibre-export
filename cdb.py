@@ -31,7 +31,6 @@ class CalibreLibrary(object):
               envvar='PYTHON_DEBUG')
 @click.pass_context
 def cli(ctx, library, output, debug):
-    click.echo(f'open {library}')
     ctx.obj = CalibreLibrary(library, output, debug)
 
 

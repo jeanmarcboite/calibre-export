@@ -29,10 +29,6 @@ class CalibreMetadata():
         self.series = get_table(Series)
         self.tag = get_table(Tags)
 
-        print(self.lang_code)
-        print(self.rating)
-        print(self.tag)
-
 
     def __str__(self):
         return f'{{Authors: {self.author}, Books: {self.book}}}'

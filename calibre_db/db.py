@@ -138,7 +138,7 @@ class Ratings(BaseModel):
         table_name = 'ratings'
 
     def __str__(self):
-        return self.rating
+        return str(self.rating)
 
 class Series(BaseModel):
     link = TextField(constraints=[SQL("DEFAULT ''")])

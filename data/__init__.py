@@ -9,5 +9,5 @@ class Library():
         self.books = Books(self.calibre)
 
     def __str__(self):
-        return f'Library: {{Books: {self.books}}}'
+        return f'{self.books}'
 
