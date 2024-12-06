@@ -5,7 +5,8 @@ from email.policy import default
 import click
 # python $exe authors --library $library  -o $output/authors
 from calibre_db import db
-from calibre_db.metadata import get_authors, CalibreMetadata
+from calibre_db.base_model import sqlite_db
+from calibre_db.metadata import get_authors
 from data import Library
 
 logger = logging.getLogger(__name__)
@@ -19,7 +20,7 @@ class CalibreLibrary(object):
         # Check if db already exists or not
         if not os.path.exists(database):
             raise ValueError(f'DB {database} does not exist')
-        db.sqlite_db.init(database)
+        sqlite_db.init(database)
 @click.group()
 @click.option('--library', type=click.Path(exists=True, file_okay=False, dir_okay=True, readable=True))
 @click.option('-o', '--output', type=click.Path(file_okay=False, dir_okay=True, readable=True, writable=True))
