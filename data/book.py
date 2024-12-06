@@ -2,7 +2,7 @@ from typing import Type
 
 import calibre_db
 from calibre_db import BaseModel
-from calibre_db.links import BooksAuthorsLink, BooksLanguagesLink, BooksPublishersLink
+from calibre_db.links import *
 from calibre_db.metadata import CalibreMetadata
 
 
@@ -14,9 +14,12 @@ class Book(calibre_db.Books):
         self.author = []
         self.comment = []
         self.publisher = []
+        self.rating = []
+        self.series = []
+        self.tag = []
 
     def __str__(self):
-        return f'{self.title}, {self.authors}, {self.publishers}, {self.lang_code}'
+        return f'{self.title}, {self.author}, {self.publisher}, {self.lang_code}, {self.rating}, {self.series}, {self.tag}'
 
 
 class Books(dict):
@@ -28,14 +31,18 @@ class Books(dict):
         self.append('author', BooksAuthorsLink)
         self.append('publisher', BooksPublishersLink)
         self.append('lang_code', BooksLanguagesLink)
+        self.append('rating', BooksRatingsLink)
+        self.append('series', BooksSeriesLink)
+        self.append('tag', BooksTagsLink)
 
     def __str__(self):
         r = '\n'
-        for k, v in self.items():
-            r += f'{v.title} ({v.author}, {v.publisher}) [{v.lang_code}]\n'
+        for book in self.values():
+            r += f'{book}\n'
         return r
 
     def append(self, attr: str, model: Type[BaseModel]):
         for link in list(model.select()):
+            # print(f' {attr} link {link} {link.book} {self[link.book]} link.{attr}={getattr(link, attr)} {getattr(self.metadata, attr)[getattr(link, attr)]}')
             getattr(self[link.book], attr).append(getattr(self.metadata, attr)[getattr(link, attr)])
 

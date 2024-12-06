@@ -137,6 +137,9 @@ class Ratings(BaseModel):
     class Meta:
         table_name = 'ratings'
 
+    def __str__(self):
+        return self.rating
+
 class Series(BaseModel):
     link = TextField(constraints=[SQL("DEFAULT ''")])
     name = TextField(unique=True)
@@ -144,6 +147,8 @@ class Series(BaseModel):
 
     class Meta:
         table_name = 'series'
+    def __str__(self):
+        return self.name
 
 class SqliteSequence(BaseModel):
     name = BareField(null=True)
@@ -159,4 +164,7 @@ class Tags(BaseModel):
 
     class Meta:
         table_name = 'tags'
+
+    def __str__(self):
+        return self.name
 
