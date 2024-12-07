@@ -1,13 +1,11 @@
 import os
 import logging
-from email.policy import default
 
 import click
-# python $exe authors --library $library  -o $output/authors
-from calibre_db import db, Authors
 from calibre_db.base_model import sqlite_db
-from calibre_db.metadata import get_table
 from data import Library
+# we need this to import all class tables
+from calibre_db import *
 
 logger = logging.getLogger(__name__)
 
@@ -34,15 +32,6 @@ def cli(ctx, library, output, debug):
     ctx.obj = CalibreLibrary(library, output, debug)
 
 
-@cli.command()
-@click.option('-f', '--fmt', '--format', '--file-type', default='all', type=str)
-@click.pass_obj
-def authors(o, fmt):
-    click.echo(f'authors {o.calibre_library} {o.output} {fmt}')
-    authors = get_table(Authors)
-    print(authors)
-
-
 def list_table(table_class, field):
     query = table_class.select()
     print(query.sql())
@@ -54,8 +43,16 @@ def list_table(table_class, field):
 @click.option('-t', '--table', type=str)
 @click.option('-f', '--field', type=str, default='name')
 def list(table, field='name'):
-    cls = globals()[table]
-    list_table(cls, field)
+    try:
+        table_class = globals()[table]
+        query = table_class.select()
+        print(query.sql())
+        for entry in query:
+            print(getattr(entry, field))
+    except KeyError:
+        logger.error(f'No such table {table}')
+    except Exception as e:
+        logger.error(repr(e))
 
 
 @cli.command()
@@ -75,7 +72,6 @@ def set_logger():
 if __name__ == '__main__':
     set_logger()
     if True:
-        click.echo('run cli')
         cli(auto_envvar_prefix='CALIBRE')
     else:
         try:
