@@ -1,6 +1,6 @@
 from flask import current_app
 
-from server.blueprint import home
+from server.blueprint import home, custom_columns
 
 
 def register_blueprints(flask_app):
@@ -8,7 +8,7 @@ def register_blueprints(flask_app):
     ctx = flask_app.app_context()
     ctx.push()
     left = [('/', 'Dashboard')]
-    links = []
+    links = [custom_columns]
     current_app.config['links'] = left + list(map(lambda x: (x.bp.url_prefix, x.bp.name), links))
     print (current_app.config['links'])
     ctx.pop()
