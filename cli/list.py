@@ -4,18 +4,17 @@ from texttable import Texttable
 from app import logger
 from calibre_db import CustomColumns
 from cli import cli
-from data import Library
+from data import library
 
 
 @cli.command()
 @click.option('-l', '--label', type=str)
 @click.option('-v', '--value', type=str)
 def list_column():
-    library = Library()
+    pass
 
 @cli.command()
 def list_columns():
-    library = Library()
     print(library.calibre.custom_column)
     table = Texttable()
     table.header(CustomColumns.pretty_header())

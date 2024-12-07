@@ -3,7 +3,7 @@ from flask import Flask, render_template, jsonify
 from jinja2 import StrictUndefined
 from flask_debugtoolbar import DebugToolbarExtension
 
-from data import Book, Library
+from data import Book, library
 from server.blueprint import register_blueprints
 
 
@@ -15,7 +15,6 @@ def create_app(test_config=None):
     # Simple route
     @app.route('/')
     def index():
-        library = Library()
         #print(library.books)
         return render_template(
             f'pages/home.html',
