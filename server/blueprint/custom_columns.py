@@ -9,22 +9,12 @@ bp = Blueprint(name.capitalize(), __name__, url_prefix=f'/{name}/')
 
 @bp.route('/api/data')
 def data():
-
-    custom_columns = []
-    for custom_column in library.calibre.custom_column.values():
-        custom_columns.append(custom_column.to_list())
-    print(custom_columns)
-
+    custom_columns = list(map(lambda custom_col: custom_col.to_list(), library.calibre.custom_column.values()))
     return {'data': custom_columns}
 
 @bp.route("/")
 def index():
-    rows = []
-    for custom_column in library.calibre.custom_column.values():
-        rows.append(custom_column.to_list())
-
     return render_template(
             f'pages/{name}.html',
         header= CustomColumns.header(),
-        custom_columns = rows
     )
