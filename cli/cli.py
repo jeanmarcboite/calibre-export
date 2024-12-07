@@ -1,7 +1,7 @@
 import click
 
 from app import set_logger
-from app.calibre_library import CalibreLibrary
+from app.context import AppContext
 
 
 @click.group()
@@ -12,5 +12,5 @@ from app.calibre_library import CalibreLibrary
 @click.pass_context
 def cli(ctx, library, output, debug):
     set_logger()
-    ctx.obj = CalibreLibrary(library, output, debug)
+    ctx.obj = AppContext(library, output, debug)
 

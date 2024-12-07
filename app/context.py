@@ -3,7 +3,7 @@ import os
 from calibre_db.base_model import sqlite_db
 
 
-class CalibreLibrary(object):
+class AppContext(object):
     def __init__(self, library=None, output=None, debug=False):
         self.calibre_library = os.path.abspath(library or '.')
         self.output = os.path.abspath(output or '.')
