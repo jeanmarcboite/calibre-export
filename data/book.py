@@ -2,6 +2,7 @@ from typing import Type
 
 from texttable import Texttable
 import calibre_db
+from calibre_db import Comments
 from calibre_db.links import *
 from calibre_db.metadata import CalibreMetadata
 
@@ -23,9 +24,9 @@ class Book(calibre_db.Books):
         self.tag = []
 
     def __str__(self):
-        return f'{self.title}, {self.author}, {self.publisher}, {self.lang_code}, {self.rating}, {self.series}, {self.tag}'
+        return f'{" ,".join(self.pretty_row())}'
     def pretty_row(self):
-        return [self.title, pretty(self.author), pretty(self.publisher), pretty(self.lang_code), pretty(self.rating), pretty(self.series), pretty(self.tag)]
+        return [self.title, pretty(self.author), pretty(self.publisher), pretty(self.lang_code), pretty(self.rating), pretty(self.series), pretty(self.tag), pretty(self.comment)]
 
 class Books(dict):
     def __init__(self, metadata: CalibreMetadata):
@@ -39,14 +40,15 @@ class Books(dict):
         self.append('rating', BooksRatingsLink)
         self.append('series', BooksSeriesLink)
         self.append('tag', BooksTagsLink)
+        self.append_comment()
 
     def __str__(self):
         book_table = Texttable()
         book_table.set_deco(Texttable.HEADER | Texttable.VLINES)
 
-        book_table.header(["Title", "Author", "Publisher", "Lang", "Rat.", "Series", "Tags"])
-        book_table.set_cols_align(['l', 'l', 'l', 'c', 'c', 'l', 'l'])
-        book_table.set_cols_width([50, 30, 20, 5, 4, 20, 30])
+        book_table.header(["Title", "Author", "Publisher", "Lang", "Rat.", "Series", "Tags", "Comments"])
+        book_table.set_cols_align(['l', 'l', 'l', 'c', 'c', 'l', 'l', 'l'])
+        book_table.set_cols_width([50, 30, 20, 5, 4, 20, 30, 60])
         for book in self.values():
             book_table.add_row(book.pretty_row())
         return book_table.draw()
@@ -56,3 +58,6 @@ class Books(dict):
             # print(f' {attr} link {link} {link.book} {self[link.book]} link.{attr}={getattr(link, attr)} {getattr(self.metadata, attr)[getattr(link, attr)]}')
             getattr(self[link.book], attr).append(getattr(self.metadata, attr)[getattr(link, attr)])
 
+    def append_comment(self):
+         for link in list(Comments.select()):
+             self[link.book].comment.append(link.text)

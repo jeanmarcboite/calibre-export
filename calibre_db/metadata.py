@@ -18,7 +18,7 @@ class CalibreMetadata():
         self.book = get_table(Books)
         self.publisher = get_table(Publishers)
         self.lang_code = get_table(Languages)
-        self.comments = get_table(Comments)
+        self.comment = get_table(Comments)
         self.conversion_options = get_table(ConversionOptions)
         self.data = get_table(Data)
         self.feed = get_table(Feeds)
