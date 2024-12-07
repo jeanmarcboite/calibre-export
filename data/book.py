@@ -25,6 +25,9 @@ class Book(calibre_db.Books):
 
     def __str__(self):
         return f'{" ,".join(self.pretty_row())}'
+    @staticmethod
+    def header():
+        return ["Title", "Author", "Publisher", "Lang", "Rat.", "Series", "Tags", "Comments"]
     def pretty_row(self):
         return [self.title, pretty(self.author), pretty(self.publisher), pretty(self.lang_code), pretty(self.rating), pretty(self.series), pretty(self.tag), pretty(self.comment)]
 

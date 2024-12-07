@@ -1,10 +1,74 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'layouts/main.html' %}
+
+{% block content %}
+<html lang="en" >
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+  <meta charset="UTF-8">
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.11/tailwind.min.css'>
+   <script src='https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.3.2/cdn.js'></script>
 </head>
 <body>
-HOME
+ <div class="relative flex flex-col w-full h-full overflow-scroll text-gray-700 bg-white shadow-md rounded-lg bg-clip-border">
+  <table class="w-full text-left table-auto min-w-max">
+    <thead>
+      <tr>
+        {% for title in header %}
+        <th class="p-4 border-b border-slate-300 bg-slate-50">
+          <p class="block text-sm font-normal leading-none text-slate-500">
+              {{title}}
+          </p>
+        </th>
+          {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+    {% for book in books %}
+      <tr class="hover:bg-slate-50">
+        <td class="p-4 border-b border-slate-200">
+          <p class="block text-sm text-slate-800">
+              {{books[book].title}}
+          </p>
+        </td>
+         <td class="p-4 border-b border-slate-200">
+          <p class="block text-sm text-slate-800">
+              {{books[book].author|join(', ')}}
+          </p>
+        </td>
+          <td class="p-4 border-b border-slate-200">
+          <p class="block text-sm text-slate-800">
+              {{books[book].publisher|join(', ')}}
+          </p>
+        </td>
+         <td class="p-4 border-b border-slate-200">
+          <p class="block text-sm text-slate-800">
+              {{books[book].lang_code|join(', ')}}
+          </p>
+        </td>
+         <td class="p-4 border-b border-slate-200">
+          <p class="block text-sm text-slate-800">
+              {{books[book].rating|join('/')}}
+          </p>
+        </td>
+         <td class="p-4 border-b border-slate-200">
+          <p class="block text-sm text-slate-800">
+              {{books[book].series|join('/')}}
+          </p>
+        </td>
+         <td class="p-4 border-b border-slate-200">
+          <p class="block text-sm text-slate-800">
+              {{books[book].tag|join(' ')}}
+          </p>
+        </td>
+         <td class="p-4 border-b border-slate-200">
+          <p class="block text-sm text-slate-800">
+              {{books[book].comment|join('\n')|safe}}
+          </p>
+        </td>
+    </tr>
+    {%endfor%}
+    </tbody>
+  </table>
+</div>
 </body>
 </html>
+{% endblock %}

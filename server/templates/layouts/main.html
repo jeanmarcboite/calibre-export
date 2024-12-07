@@ -1,0 +1,33 @@
+{% if request.headers.get("hx-request") == None %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link
+      rel="stylesheet"
+      href="{{url_for('static',filename='dist/css/out.css')}}"
+    />
+    <script async defer src="https://unpkg.com/@material-tailwind/html@latest/scripts/ripple.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@material-tailwind/html@2.3.2/styles/material-tailwind.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.0.2/tailwind.min.css" />
+     <script src="https://unpkg.com/htmx.org@latest"></script>
+    <!-- from cdn -->
+<script src="https://unpkg.com/@material-tailwind/html@latest/scripts/collapse.js"></script>
+   <title>HTMX App</title>
+</head>
+
+<body class="bg-gray-200">
+        <!-- Navigation -->
+        {%- include('partials/navbar.html')%}
+        <!-- Main Content Area -->
+        <div class="w-full bg-white p-4" id="main">
+{% endif %}
+            {% block content %}{% endblock %}
+{% if request.headers.get("hx-request") == None %}
+        </div>
+</body>
+
+</html>
+{% endif %}
