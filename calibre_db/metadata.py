@@ -2,7 +2,7 @@ from symtable import Class
 from typing import Type
 
 from calibre_db import Authors, Books, Publishers, BaseModel, Languages, Comments, ConversionOptions, Data, Feeds, \
-    Identifiers, LastReadPositions, LibraryId, Ratings, Series, Tags
+    Identifiers, LastReadPositions, LibraryId, Ratings, Series, Tags, CustomColumns
 
 
 def get_table(cls: Type[BaseModel]) -> dict:
@@ -28,6 +28,8 @@ class CalibreMetadata():
         self.rating = get_table(Ratings)
         self.series = get_table(Series)
         self.tag = get_table(Tags)
+
+        self.custom_column = get_table(CustomColumns)
 
 
     def __str__(self):

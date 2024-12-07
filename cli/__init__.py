@@ -2,6 +2,7 @@ import logging
 import os
 
 import click
+from texttable import Texttable
 
 from app import set_logger, logger
 from calibre_db.base_model import sqlite_db
@@ -58,5 +59,17 @@ def read():
 @click.option('-v', '--value', type=str)
 def list_column():
     library = Library()
+
+@cli.command()
+def list_columns():
+    library = Library()
+    print(library.calibre.custom_column)
+    table = Texttable()
+    table.header(CustomColumns.pretty_header())
+    table.set_cols_width(CustomColumns.cols_width())
+    for col in library.calibre.custom_column.values():
+        table.add_row(col.pretty_row())
+    print(table.draw())
+
 
 

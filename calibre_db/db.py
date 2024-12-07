@@ -54,6 +54,30 @@ class ConversionOptions(BaseModel):
             (('format', 'book'), True),
         )
 
+class CustomColumns(BaseModel):
+    datatype = TextField()
+    display = TextField(constraints=[SQL("DEFAULT '{}'")])
+    editable = BooleanField(constraints=[SQL("DEFAULT 1")])
+    is_multiple = BooleanField(constraints=[SQL("DEFAULT 0")])
+    label = TextField(unique=True)
+    mark_for_delete = BooleanField(constraints=[SQL("DEFAULT 0")])
+    name = TextField()
+    normalized = BooleanField()
+
+    class Meta:
+        table_name = 'custom_columns'
+
+    def __str__(self):
+        return " ,".join(map(str, self.pretty_row()))
+    def pretty_row(self):
+        return [self.label, self.name, self.datatype, self.mark_for_delete, self.editable, self.display, self.is_multiple, self.normalized]
+    @staticmethod
+    def pretty_header():
+        return ["Label", "Name", "Datatype", "del", "edit", "display", "mult", "norm"]
+    @staticmethod
+    def cols_width():
+        return [20, 20, 10, 5, 5, 40, 5, 5]
+
 class Data(BaseModel):
     book = IntegerField(index=True)
     format = TextField(index=True)
