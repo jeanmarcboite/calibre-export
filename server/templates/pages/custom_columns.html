@@ -8,7 +8,19 @@
    <script src='https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.3.2/cdn.js'></script>
 </head>
 <body>
-{% include ('partials/newtable.html') %}
+<div id="wrapper"></div>
+<script>
+    let columns = JSON.parse('{{ header | tojson }}');
+    new gridjs.Grid({
+  columns,
+          server: {
+          url: '/custom_columns/api/data',
+          then: results => results.data,
+          total: results => results.total,
+        },
+        sort: true, resizable: true, pagination: true
+}).render(document.getElementById("wrapper"));
+</script>
 </body>
 </html>
 {% endblock %}

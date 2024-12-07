@@ -7,10 +7,6 @@ from calibre_db.links import *
 from calibre_db.metadata import CalibreMetadata
 
 
-def pretty(data: list):
-    return ", ".join(map(str, data))
-
-
 class Book(calibre_db.Books):
     def __init__(self, _from: calibre_db.Books):
         super().__init__()
@@ -24,12 +20,12 @@ class Book(calibre_db.Books):
         self.tag = []
 
     def __str__(self):
-        return f'{" ,".join(self.pretty_row())}'
+        return " ,".join(map(str, self.to_list()))
     @staticmethod
     def header():
         return ["Title", "Author", "Publisher", "Lang", "Rat.", "Series", "Tags", "Comments"]
-    def pretty_row(self):
-        return [self.title, pretty(self.author), pretty(self.publisher), pretty(self.lang_code), pretty(self.rating), pretty(self.series), pretty(self.tag), pretty(self.comment)]
+    def to_list(self):
+        return [self.title, self.author, self.publisher, self.lang_code, self.rating, self.series, self.tag, self.comment]
 
 class Books(dict):
     def __init__(self, metadata: CalibreMetadata):
@@ -53,7 +49,7 @@ class Books(dict):
         book_table.set_cols_align(['l', 'l', 'l', 'c', 'c', 'l', 'l', 'l'])
         book_table.set_cols_width([50, 30, 20, 5, 4, 20, 30, 60])
         for book in self.values():
-            book_table.add_row(book.pretty_row())
+            book_table.add_row(book.to_list())
         return book_table.draw()
 
     def append(self, attr: str, model: Type[BaseModel]):

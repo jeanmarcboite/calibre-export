@@ -2,7 +2,7 @@ import click
 from texttable import Texttable
 
 from app import logger
-from calibre_db import CustomColumns
+from calibre_db import *
 from cli import cli
 from data import library
 
@@ -17,10 +17,10 @@ def list_column():
 def list_columns():
     print(library.calibre.custom_column)
     table = Texttable()
-    table.header(CustomColumns.pretty_header())
+    table.header(CustomColumns.header())
     table.set_cols_width(CustomColumns.cols_width())
-    for col in library.calibre.custom_column.values():
-        table.add_row(col.pretty_row())
+    for custom_column in library.calibre.custom_column.values():
+        table.add_row(custom_column.to_list())
     print(table.draw())
 
 

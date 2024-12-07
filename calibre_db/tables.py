@@ -68,11 +68,11 @@ class CustomColumns(BaseModel):
         table_name = 'custom_columns'
 
     def __str__(self):
-        return " ,".join(map(str, self.pretty_row()))
-    def pretty_row(self):
+        return " ,".join(map(str, self.to_list()))
+    def to_list(self):
         return [self.label, self.name, self.datatype, self.mark_for_delete, self.editable, self.display, self.is_multiple, self.normalized]
     @staticmethod
-    def pretty_header():
+    def header():
         return ["Label", "Name", "Datatype", "del", "edit", "display", "mult", "norm"]
     @staticmethod
     def cols_width():
