@@ -16,5 +16,6 @@ def data():
 def index():
     return render_template(
             f'pages/{name}.html',
-        header= CustomColumns.header(),
+        data=list(map(lambda custom_col: custom_col.to_dict(), library.calibre.custom_column.values())),
+        header= CustomColumns.columns(),
     )

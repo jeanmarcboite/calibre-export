@@ -1,0 +1,12 @@
+<script>
+        let columns = JSON.parse('{{ header | tojson }}');
+        let data = JSON.parse('{{ data | tojson }}');
+var table = new Tabulator("#wrapper", {
+    data,
+    height:"80%",
+    layout:"fitDataFill",
+    responsiveLayout:"collapse",
+    rowHeader:{formatter:"responsiveCollapse", width:30, minWidth:30, hozAlign:"center", resizable:false, headerSort:false},
+    columns
+});
+</script>

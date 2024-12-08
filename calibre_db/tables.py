@@ -14,6 +14,7 @@ class Authors(BaseModel):
     def __str__(self):
         return self.name
 
+
 class Books(BaseModel):
     author_sort = TextField(index=True, null=True)
     flags = IntegerField(constraints=[SQL("DEFAULT 1")])
@@ -43,6 +44,7 @@ class Comments(BaseModel):
     class Meta:
         table_name = 'comments'
 
+
 class ConversionOptions(BaseModel):
     book = IntegerField(index=True, null=True)
     data = BlobField()
@@ -53,6 +55,7 @@ class ConversionOptions(BaseModel):
         indexes = (
             (('format', 'book'), True),
         )
+
 
 class CustomColumns(BaseModel):
     datatype = TextField()
@@ -69,14 +72,53 @@ class CustomColumns(BaseModel):
 
     def __str__(self):
         return " ,".join(map(str, self.to_list()))
+
     def to_list(self):
-        return [self.label, self.name, self.datatype, self.mark_for_delete, self.editable, self.display, self.is_multiple, self.normalized]
+        return [self.label, self.name, self.datatype, self.mark_for_delete, self.editable, self.display,
+                self.is_multiple, self.normalized]
+
+    def to_dict(self):
+        escaped = str(self.display).translate(str.maketrans({"-": r"\-",
+                                                    "]": r"\]",
+                                                    "\\": r"\\",
+                                                    "^": r"\^",
+                                                    "$": r"\$",
+                                                    "*": r"\*",
+                                                    ".": r"\."}))
+        return {'label': self.label, 'name': self.name, 'datatype': self.datatype,
+                'mark_for_delete': self.mark_for_delete, 'editable': self.editable,
+                'display': "escaped",
+                'is_multiple': self.is_multiple,
+                'normalized': self.normalized}
+
     @staticmethod
     def header():
         return ["Label", "Name", "Datatype", "del", "edit", "display", "mult", "norm"]
+
+    @staticmethod
+    def columns():
+        tick_formatter = {'formatter': "tickCross",
+                          'hozAlign': "center",
+                          'formatterParams': {
+                              'allowEmpty': True,
+                              'allowTruthy': True,
+                              'tickElement': "<i class='fa fa-check'></i>",
+                              'crossElement': "<i class='fa fa-times'></i>",
+                          }}
+        return [
+            {'title': 'Label', 'field': 'label', 'width': 200, 'responsive': 0},
+            {'title': 'Name', 'field': 'name', 'width': 200, 'responsive': 0},
+            {'title': 'Data Type', 'field': 'datatype', 'width': 200, 'responsive': 0},
+            {'title': 'Mark for delete', 'field': 'mark_for_delete', 'responsive': 0, **tick_formatter},
+            {'title': 'display', 'field': 'display', 'width': 200, 'responsive': 0},
+            {'title': 'is multiple', 'field': 'is_multiple', 'responsive': 0, **tick_formatter},
+            {'title': 'normalized', 'field': 'normalized', 'responsive': 0, **tick_formatter}
+        ]
+
     @staticmethod
     def cols_width():
         return [20, 20, 10, 5, 5, 40, 5, 5]
+
 
 class Data(BaseModel):
     book = IntegerField(index=True)
@@ -90,12 +132,14 @@ class Data(BaseModel):
             (('book', 'format'), True),
         )
 
+
 class Feeds(BaseModel):
     script = TextField()
     title = TextField(unique=True)
 
     class Meta:
         table_name = 'feeds'
+
 
 class Identifiers(BaseModel):
     book = IntegerField()
@@ -108,14 +152,17 @@ class Identifiers(BaseModel):
             (('book', 'type'), True),
         )
 
+
 class Languages(BaseModel):
     lang_code = TextField(unique=True)
     link = TextField(constraints=[SQL("DEFAULT ''")])
 
     class Meta:
         table_name = 'languages'
+
     def __str__(self):
         return self.lang_code
+
 
 class LastReadPositions(BaseModel):
     book = IntegerField(index=True)
@@ -132,17 +179,20 @@ class LastReadPositions(BaseModel):
             (('user', 'device', 'book', 'format'), True),
         )
 
+
 class LibraryId(BaseModel):
     uuid = TextField(unique=True)
 
     class Meta:
         table_name = 'library_id'
 
+
 class MetadataDirtied(BaseModel):
     book = IntegerField(unique=True)
 
     class Meta:
         table_name = 'metadata_dirtied'
+
 
 class Publishers(BaseModel):
     link = TextField(constraints=[SQL("DEFAULT ''")])
@@ -151,8 +201,10 @@ class Publishers(BaseModel):
 
     class Meta:
         table_name = 'publishers'
+
     def __str__(self):
         return self.name
+
 
 class Ratings(BaseModel):
     link = TextField(constraints=[SQL("DEFAULT ''")])
@@ -164,6 +216,7 @@ class Ratings(BaseModel):
     def __str__(self):
         return str(self.rating)
 
+
 class Series(BaseModel):
     link = TextField(constraints=[SQL("DEFAULT ''")])
     name = TextField(unique=True)
@@ -171,8 +224,10 @@ class Series(BaseModel):
 
     class Meta:
         table_name = 'series'
+
     def __str__(self):
         return self.name
+
 
 class SqliteSequence(BaseModel):
     name = BareField(null=True)
@@ -181,6 +236,7 @@ class SqliteSequence(BaseModel):
     class Meta:
         table_name = 'sqlite_sequence'
         primary_key = False
+
 
 class Tags(BaseModel):
     link = TextField(constraints=[SQL("DEFAULT ''")])
@@ -191,4 +247,3 @@ class Tags(BaseModel):
 
     def __str__(self):
         return self.name
-
