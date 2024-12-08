@@ -6,5 +6,27 @@
   </button>
   <div x-show="open" @click.away="open = false" class="origin-top-left absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 px-2 py-2 z-50">
     <a href={{url_for('CustomColumns.index')}} class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">List</a>
+    <div x-data="{ subMenuOpen: false }" class="relative">
+      <button @click="subMenuOpen = !subMenuOpen" class="flex justify-between items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 relative rounded-md"> Column <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="h-5 w-5 ml-2" transform="matrix(1, 0, 0, 1, 0, 0)rotate(270)">
+          <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+          <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+          <g id="SVGRepo_iconCarrier">
+            <g id="Layer_2" data-name="Layer 2">
+              <g id="invisible_box" data-name="invisible box">
+                <rect width="48" height="48" fill="none"></rect>
+              </g>
+              <g id="icons_Q2" data-name="icons Q2">
+                <path d="M24,27.2,13.4,16.6a1.9,1.9,0,0,0-3,.2,2.1,2.1,0,0,0,.2,2.7l12,11.9a1.9,1.9,0,0,0,2.8,0l12-11.9a2.1,2.1,0,0,0,.2-2.7,1.9,1.9,0,0,0-3-.2Z"></path>
+              </g>
+            </g>
+          </g>
+        </svg>
+      </button>
+      <div x-show="subMenuOpen" @click.away="subMenuOpen = false" class="absolute top-0 left-full ml-4 w-full rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 px-2 py-2">
+                {% for column in config['custom_columns'] %}
+        <a target="_blank" rel="noopener" href="" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">{{column}}</a>
+        {%endfor%}
+      </div>
+    </div>
   </div>
 </div>

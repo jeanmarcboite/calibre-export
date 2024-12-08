@@ -14,5 +14,6 @@ class AppContext(object):
         if not os.path.exists(database):
             raise ValueError(f'DB {database} does not exist')
         sqlite_db.init(database)
+        print('read library')
         library.read()
 
