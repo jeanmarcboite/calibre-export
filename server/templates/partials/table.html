@@ -1,8 +1,15 @@
 <script>
         let columns = JSON.parse('{{ header | tojson }}');
-        let data = JSON.parse('{{ data | tojson }}');
+
 var table = new Tabulator("#wrapper", {
-    data,
+    ajaxURL: "/api/data",
+    ajaxContentType:"json",
+    ajaxResponse:function(url, params, response){
+        //url - the URL of the request
+        //params - the parameters passed with the request
+        //response - the JSON object returned in the body of the response.
+        return response; //pass the data array into Tabulator
+    },
     height:"80%",
     layout:"fitDataFill",
     responsiveLayout:"collapse",

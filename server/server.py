@@ -12,11 +12,6 @@ def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
 
-    # Simple route
-    @app.route('/')
-    def index():
-        return redirect(url_for('/home'))
-
     @app.route('/hello')
     def hello_world():
         return jsonify({

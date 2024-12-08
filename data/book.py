@@ -29,7 +29,8 @@ class Book(calibre_db.Books):
 
     def to_dict(self) -> dict:
         return {
-            'title': " ,".join(map(str, self.title)),
+            'id': self.id,
+            'title': self.title,
             'author': " ,".join(map(str, self.author)),
             'publisher': " ,".join(map(str, self.publisher)),
             'lang_code': " ,".join(map(str, self.lang_code)),
@@ -41,6 +42,7 @@ class Book(calibre_db.Books):
     @staticmethod
     def columns():
         return [
+            {'title': '#', 'field': 'id', 'width': 80, 'hozAlign':"right", 'responsive': 0},
             {'title': 'Title', 'field': 'title', 'width': 200, 'responsive': 0},
             {'title': 'Author', 'field': 'author', 'width': 200, 'responsive': 0},
             {'title': 'Publisher', 'field': 'publisher', 'width': 200, 'responsive': 0},
