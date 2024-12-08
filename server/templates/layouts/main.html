@@ -3,20 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" rel="stylesheet" />
-<script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
-   <title>Calibre App</title>
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.11/tailwind.min.css'>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.3.2/cdn.js' defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tabulator/6.3.0/js/tabulator.min.js"
+            integrity="sha512-fZfpyeOixExw8pb+GCN0Ycq6Yn7boMhg2pLvOqeioqPPFSK4uYGhVnmsC4BS7g5FFP+1uxS9UuMQ/jxL4j93ww=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/6.3.0/css/tabulator.min.css"
+          integrity="sha512-RYFH4FFdhD/FdA+OVEbFVqd5ifR+Dnx2M7eWcmkcMexlIoxNgm89ieeVyHYb8xChuYBtbrasMTlo02cLnidjtQ=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+          integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+
+    <title>Calibre App</title>
 </head>
 
 <body class="bg-gray-200">
-        <!-- Navigation -->
-        {%- include('partials/navbar.html')%}
-        <!-- Main Content Area -->
-        <div class="w-full bg-white p-4" id="main">
-{% endif %}
-            {% block content %}{% endblock %}
-{% if request.headers.get("hx-request") == None %}
-        </div>
+<!-- Navigation -->
+{%- include('partials/navbar.html')%}
+<!-- Main Content Area -->
+<div class="w-full bg-white p-4" id="main">
+    {% endif %}
+    {% block content %}{% endblock %}
+    {% if request.headers.get("hx-request") == None %}
+</div>
 </body>
 
 </html>
