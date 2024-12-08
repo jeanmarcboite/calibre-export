@@ -15,7 +15,7 @@
                 Inactive Link = hover:text-indigo-500 -->
                 {% for link in config['links'] %}
                 <li class="md:px-4 md:py-2 hover:text-indigo-400">
-                    <a hx-get="{{link[0]}}" hx-push-url="true" hx-target="#main">
+                    <a href="{{link[0]}}">
                         {{link[1]}}
                     </a>
                 </li>
