@@ -1,9 +1,8 @@
 import click
-from flask import Flask, render_template, jsonify, redirect, url_for
+from flask import Flask,jsonify
 from jinja2 import StrictUndefined
 from flask_debugtoolbar import DebugToolbarExtension
 
-from data import Book, library
 from server.blueprint import register_blueprints
 
 
