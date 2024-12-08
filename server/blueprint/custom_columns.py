@@ -1,3 +1,5 @@
+from re import sub
+
 from flask import Blueprint, render_template
 
 from calibre_db import *
@@ -5,7 +7,7 @@ from data import Book, library
 
 name = "custom_columns"
 
-bp = Blueprint(name.capitalize(), __name__, url_prefix=f'/{name}/')
+bp = Blueprint(sub(r"(_|-)+", " ", name).title().replace(" ", ""), __name__, url_prefix=f'/{name}/')
 
 @bp.route('/api/data')
 def data():
