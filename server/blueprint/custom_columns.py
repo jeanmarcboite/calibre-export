@@ -9,13 +9,13 @@ bp = Blueprint(name.capitalize(), __name__, url_prefix=f'/{name}/')
 
 @bp.route('/api/data')
 def data():
-    custom_columns = list(map(lambda custom_col: custom_col.to_list(), library.calibre.custom_column.values()))
-    return {'data': custom_columns}
+    return list(map(lambda column: column.to_dict(), library.calibre.custom_column.values())), 200
 
 @bp.route("/")
 def index():
+    print (dir(bp))
     return render_template(
             f'pages/{name}.html',
-        data=list(map(lambda custom_col: custom_col.to_dict(), library.calibre.custom_column.values())),
-        header= CustomColumns.columns(),
+        ajaxURL = f'/{name}/api/data',
+        header=CustomColumns.columns()
     )

@@ -12,6 +12,7 @@ bp = Blueprint(name.capitalize(), __name__, url_prefix=f'/')
 def index():
     return render_template(
             f'pages/{name}.html',
+        ajaxURL = '/api/data',
         header=Book.columns(),
         books = library.books
     )

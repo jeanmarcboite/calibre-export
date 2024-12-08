@@ -33,7 +33,7 @@ class CustomColumns(BaseModel):
                                                     ".": r"\."}))
         return {'label': self.label, 'name': self.name, 'datatype': self.datatype,
                 'mark_for_delete': self.mark_for_delete, 'editable': self.editable,
-                'display': "escaped",
+                'display': self.display,
                 'is_multiple': self.is_multiple,
                 'normalized': self.normalized}
 

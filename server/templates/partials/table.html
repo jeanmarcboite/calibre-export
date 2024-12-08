@@ -2,7 +2,7 @@
         let columns = JSON.parse('{{ header | tojson }}');
 
 var table = new Tabulator("#wrapper", {
-    ajaxURL: "/api/data",
+    ajaxURL: '{{ajaxURL}}',
     ajaxContentType:"json",
     ajaxResponse:function(url, params, response){
         //url - the URL of the request
