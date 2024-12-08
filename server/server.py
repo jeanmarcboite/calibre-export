@@ -1,5 +1,5 @@
 import click
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, redirect, url_for
 from jinja2 import StrictUndefined
 from flask_debugtoolbar import DebugToolbarExtension
 
@@ -15,12 +15,7 @@ def create_app(test_config=None):
     # Simple route
     @app.route('/')
     def index():
-        #print(library.books)
-        return render_template(
-            f'pages/home.html',
-            header=Book.header(),
-            books=library.books
-        )
+        return redirect(url_for('/home'))
 
     @app.route('/hello')
     def hello_world():

@@ -27,6 +27,31 @@ class Book(calibre_db.Books):
     def to_list(self):
         return [self.title, self.author, self.publisher, self.lang_code, self.rating, self.series, self.tag, self.comment]
 
+    def to_dict(self) -> dict:
+        return {
+            'title': " ,".join(map(str, self.title)),
+            'author': " ,".join(map(str, self.author)),
+            'publisher': " ,".join(map(str, self.publisher)),
+            'lang_code': " ,".join(map(str, self.lang_code)),
+            'rating': " ,".join(map(str, self.rating)),
+            'series': " ,".join(map(str, self.series)),
+            'tags': " ,".join(map(str, self.tag)),
+            'comments': " ,".join(map(str, self.comment)),
+        }
+    @staticmethod
+    def columns():
+        return [
+            {'title': 'Title', 'field': 'title', 'width': 200, 'responsive': 0},
+            {'title': 'Author', 'field': 'author', 'width': 200, 'responsive': 0},
+            {'title': 'Publisher', 'field': 'publisher', 'width': 200, 'responsive': 0},
+            {'title': 'Language', 'field': 'lang_code', 'width': 200, 'responsive': 0},
+            {'title': 'Rating', 'field': 'rating', 'width': 200, 'responsive': 0},
+            {'title': 'Series', 'field': 'series', 'width': 200, 'responsive': 0},
+            {'title': 'Tags', 'field': 'tag', 'width': 200, 'responsive': 0},
+            {'title': 'comments', 'field': 'comment', 'width': 200, 'responsive': 0},
+        ]
+
+
 class Books(dict):
     def __init__(self, metadata: CalibreMetadata):
         super().__init__()
