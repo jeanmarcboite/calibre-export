@@ -18,6 +18,8 @@
           then: results => results.data,
           total: results => results.total,
         },
+        fixedHeader: true,
+        height: '400px',
         sort: true, resizable: true, pagination: true
 }).render(document.getElementById("wrapper"));
 </script>
